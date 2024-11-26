@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 
 import pygame
 
@@ -13,6 +13,7 @@ UP = (0, -1)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
+DIRECT = [UP, DOWN, LEFT, RIGHT]
 
 """Константы определяющие цвет заднего фона, окантовки,
 а так же, цвета объектов"""
@@ -90,7 +91,7 @@ class Snake(GameObject):
         self.body_color = SNAKE_COLOR
         self.length = 1
         self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
-        self.direction = RIGHT
+        self.direction = choice(DIRECT)
         self.next_direction = None
         self.last = None
 
