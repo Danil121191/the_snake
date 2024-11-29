@@ -1,5 +1,5 @@
-from random import choice, randint
 import sys
+from random import choice, randint
 
 import pygame
 
@@ -59,20 +59,19 @@ class GameObject:
 class Apple(GameObject):
     """Дочерний класс яблоко."""
 
-    def __init__(self, snake_positions=START_SNAKE_POSITION, trup_position=[],
-                 position=None, body_color=APPLE_COLOR):
-        super().__init__(position=None, body_color=APPLE_COLOR)
-        self.body_color = body_color
-        self.randomize_position(snake_positions, trup_position)
+    def __init__(self, occupided_cells=None, body_color=APPLE_COLOR):
+        if occupided_cells is None:
+            occupided_cells = []
+        super().__init__(body_color=body_color)
+        self.randomize_position(occupided_cells)
 
-    def randomize_position(self, snake_positions, trup_position):
+    def randomize_position(self, occupided_cells):
         """Метод для определения позиции яблока"""
         while True:
             self.position = (
                 ((randint(0, SCREEN_WIDTH // GRID_SIZE - 1)) * GRID_SIZE),
                 ((randint(0, SCREEN_HEIGHT // GRID_SIZE - 1)) * GRID_SIZE))
-            if (self.position not in snake_positions
-               and self.position not in trup_position):
+            if (self.position not in occupided_cells):
                 break
 
     def draw(self):
@@ -107,12 +106,11 @@ class Snake(GameObject):
                      (y_head + self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT)
 
         self.positions.insert(0, next_head)
-        self.last = self.positions.pop()
 
-        if len(self.positions) < self.length:
-            self.positions.insert(0, next_head)
-        elif len(self.positions) > self.length:
-            self.reset()
+        if len(self.positions) > self.length:
+            self.last = self.positions.pop()
+        else:
+            self.last = self.last
 
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
@@ -172,7 +170,7 @@ def main():
         snake.move()
         if snake.get_head_position() == apple.position:
             snake.length += 1
-            apple.randomize_position(snake.positions, trup_position=[])
+            apple.randomize_position(snake.positions)
         elif snake.get_head_position() in snake.positions[4:]:
             snake.reset()
 
